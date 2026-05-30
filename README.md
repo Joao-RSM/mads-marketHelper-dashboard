@@ -1,20 +1,24 @@
-```markdown
-# MarketHelper - Gestão e Análise de Compras Cloud
+ # MarketHelper - Gestão e Análise de Compras Cloud
+
 
 Aplicação web em Flask que lê dados de um Google Sheets e apresenta tabelas, mapa interativo, dashboard e validação de dados, com controlo de acesso por chaves.
 
-Relatório do projeto desenvolvido disponível em: https://github.com/josearmando5002-prog/mads-marketHelper
+
+Relatório do projeto desenvolvido disponível em: [docs.google.com](https://docs.google.com/document/d/13gSFjmzMoq2zGprYOtWKZ1EMkF2OzDOVnUL1zNi6VSw/edit?tab=t.0#heading=h.2ktf1rf4d27p)
+
 
 > Projeto disponível na plataforma Render.com [Link do Projeto](https://mads-markethelper-grupo2.onrender.com/). As chaves de acesso aos dados privados estão disponíveis no relatório do projeto.
 
-> ⚠️ Desenvolvido com apoio de [Gemini](https://gemini.google.com) e [ChatGPT](https://chatgpt.com) na criação da zona de testes e revisão do código, assumindo o grupo total responsabilidade pelo código presente.
 
----
+> Com apoio de [Gemini](https://gemini.google.com) e [ChatGPT](https://chatgpt.com)
+
+
+--- 
 
 ## Funcionalidades
 
 | Módulo | Descrição |
-| :--- | :--- |
+|---|---|
 | **Tabelas** | Utilizadores, lojas, compras e categorias de lojas lidas da Cloud. |
 | **Mapa** | Marcadores geográficos das superfícies comerciais registadas. |
 | **Dashboard** | Gráficos de evolução de preços e cálculo autónomo de variação percentual. |
@@ -73,7 +77,7 @@ sheet = gc.open("Base de Dados - Utilizadores - Grupo 2")
 
 ### 2. Chaves de acesso
 
-Criar `secrets/chave.json` com o formato `{"chave": "tabela"}`:
+Criar `secrets/chave.json` com o mapeamento das duas chaves do projeto:
 
 ```json
 {
@@ -144,15 +148,15 @@ python app.py
 
 **Lojas**
 
-* Nome/Localização vazios ou registos geográficos duplicados na mesma localidade, categoria ou especialidade inexistente fora da lista.
+* Nome/Localização vazios ou registos geográficos duplicados na mesma localidade, categoria ou especialidade inexistente fora da lista fechada (*Padaria, Talho, Peixaria, Supermercado*).
 
 **Utilizadores**
 
-* NIF vazio ou duplicado, NIF com comprimento inválido fora dos 9 dígitos, género inválido (apenas M, F ou O), idade calculada não positiva.
+* NIF vazio ou duplicado, NIF com comprimento inválido fora dos 9 dígitos, género inválido (apenas M, F ou O), idade calculada através da data de nascimento não positiva.
 
 **Compras**
 
-* NIFs de utilizador ou IDs de lojas inexistentes nas tabelas base (dados órfãos), preço não positivo (float <= 0), tipo de pagamento inválido quando especificado.
+* NIFs de utilizador ou IDs de lojas inexistentes nas tabelas base (dados órfãos), preço não positivo (float <= 0), tipo de pagamento inválido quando especificado, produto guardado automaticamente em minúsculas via `.lower()`.
 
 ---
 
@@ -162,7 +166,7 @@ João Martins, José Mendonça, Rodrigo Santos, Mário Pinto
 
 **Unidade Curricular:** Metodologias Ágeis de Desenvolvimento de Software · Projeto 2
 
-**Data:** Junho de 2026 · **Instituição:** Universidade da Maia (UMaia)
+**Data:** Maio de 2026 · **Instituição:** Instituto Politécnico da Maia (IPMAIA)
 
 ```
 
