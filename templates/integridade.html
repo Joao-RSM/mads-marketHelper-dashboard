@@ -2,8 +2,8 @@
 {% block title %}Relatório de Integridade - MarketHelper{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
-    <h2 class="fw-bold text-danger">🛡️ Auditoria Autónomo & Relatório de Integridade (HU6)</h2>
-    <a href="/logout" class="btn btn-outline-danger btn-sm">Bloquear Administração</a>
+    <h2 class="fw-bold text-danger">Auditoria Autónoma & Relatório de Integridade</h2>
+    <a href="/logout" class="btn btn-outline-danger btn-sm">Bloquear Administration</a>
 </div>
 
 <div class="row mb-4 text-center">
@@ -35,7 +35,7 @@
 
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-danger text-white fw-bold d-flex justify-content-between align-items-center">
-        <span>🚨 Alertas Ativos na Planilha Google Sheets</span>
+        <span>Alertas Ativos na Planilha Google Sheets</span>
         <span class="badge bg-white text-danger fw-bold">{{ erros|length }} Erros</span>
     </div>
     <div class="card-body p-0">
@@ -54,7 +54,7 @@
             </div>
         {% else %}
             <div class="text-center py-5 text-muted">
-                <h4 class="fw-bold text-success">✔️ Base de Dados Cloud 100% Consistente!</h4>
+                <h4 class="fw-bold text-success">Base de Dados Cloud 100% Consistente!</h4>
                 <p class="mb-0">Nenhum cabeçalho vazio, duplicação de NIF ou dados órfãos intercetados.</p>
             </div>
         {% endif %}
