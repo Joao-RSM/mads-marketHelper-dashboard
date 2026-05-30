@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Privado - MarketHelper{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+    <h2 class="fw-bold text-dark">📊 Painel Analítico Privado (HU3 / HU5)</h2>
+    <div>
+        <a href="/exportar_json" class="btn btn-warning fw-bold shadow-sm">📥 Exportar View para JSON (HU4)</a>
+        <a href="/logout" class="btn btn-outline-danger btn-sm ms-2">Bloquear Área</a>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-secondary text-white fw-bold">🔍 Consultas Avançadas & Filtros</div>
+    <div class="card-body">
+        <form action="/dashboard" method="GET" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label small fw-bold">Filtrar por Propriedade</label>
+                <select name="filtro_tipo" class="form-select form-select-sm">
+                    <option value="">Nenhum (Mostrar Tudo)</option>
+                    <option value="produto" {% if filtro_tipo == 'produto' %}selected{% endif %}>Produto (Nome)</option>
+                    <option value="loja" {% if filtro_tipo == 'loja' %}selected{% endif %}>ID da Loja</option>
+                    <option value="nif" {% if filtro_tipo == 'nif' %}selected{% endif %}>NIF Utilizador</option>
+                    <option value="pagamento" {% if filtro_tipo == 'pagamento' %}selected{% endif %}>Método Pagamento</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">Valor de Pesquisa</label>
+                <input type="text" name="filtro_valor" class="form-control form-control-sm" placeholder="Ex: frango" value="{{ filtro_valor or '' }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold">Ordenação</label>
+                <select name="ordem" class="form-select form-select-sm">
+                    <option value="asc" {% if ordem == 'asc' %}selected{% endif %}>Ascendente</option>
+                    <option value="desc" {% if ordem == 'desc' %}selected{% endif %}>Descendente</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary btn-sm w-100 fw-bold">Executar Query</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white fw-bold">📈 Evolução Histórica de Preços ("Estilo KuantoKusta")</div>
+            <div class="card-body text-center py-4">
+                <form action="/dashboard" method="GET" class="row justify-content-center g-2 mb-4">
+                    <div class="col-md-4">
+                        <input type="text" name="grafico_produto" class="form-control" placeholder="Nome do produto (Ex: frango)" value="{{ grafico_produto or '' }}" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-dark w-100 fw-bold">Gerar Gráfico</button>
+                    </div>
+                </form>
+                
+                {% if grafico_base64 %}
+                    <div class="border p-3 bg-white rounded shadow-sm d-inline-block">
+                        <img src="data:image/png;base64,{{ grafico_base64 }}" alt="Gráfico de Evolução de Preços" class="img-fluid rounded">
+                    </div>
+                {% else %}
+                    <div class="bg-light p-5 border rounded text-muted">
+                        <p class="mb-0 fs-5">Insira o nome de um produto acima para renderizar o histórico analítico e variações percentuais.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white fw-bold">📑 Histórico Transacional Completo de Compras (Dados Privados)</div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0 small">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID Compra</th>
+                        <th>NIF Utilizador</th>
+                        <th>Produto</th>
+                        <th>Preço</th>
+                        <th>ID Loja</th>
+                        <th>Data de Compra</th>
+                        <th>Pagamento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for compra in compras %}
+                    <tr>
+                        <td class="fw-bold">{{ compra['ID Compra'] }}</td>
+                        <td>{{ compra['NIF Utilizador'] }}</td>
+                        <td class="text-lowercase">{{ compra['Produto'] }}</td>
+                        <td class="fw-bold text-success">{{ compra['Preço'] }} €</td>
+                        <td>{{ compra['ID Loja'] }}</td>
+                        <td>{{ compra['Data_compra'] }}</td>
+                        <td>
+                            {% if compra['Tipo Pagamento'] == 'N' %}
+                                <span class="badge bg-secondary">Numerário</span>
+                            {% elif compra['Tipo Pagamento'] == 'M' %}
+                                <span class="badge bg-info text-dark">Multibanco</span>
+                            {% else %}
+                                <span class="text-muted italic">Não especificado</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">Nenhum registo transacional encontrado para os critérios selecionados.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
