@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Relatório de Integridade - MarketHelper{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+    <h2 class="fw-bold text-danger">🛡️ Auditoria Autónomo & Relatório de Integridade (HU6)</h2>
+    <a href="/logout" class="btn btn-outline-danger btn-sm">Bloquear Administração</a>
+</div>
+
+<div class="row mb-4 text-center">
+    <div class="col-md-4">
+        <div class="card shadow-sm py-3 border-start border-primary border-4 bg-white">
+            <div class="card-body">
+                <h6 class="text-uppercase text-muted fw-bold small">Total de Linhas Cloud</h6>
+                <div class="h2 mb-0 fw-bold text-dark">{{ total_linhas }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm py-3 border-start border-success border-4 bg-white">
+            <div class="card-body">
+                <h6 class="text-uppercase text-muted fw-bold small">Linhas Íntegras</h6>
+                <div class="h2 mb-0 fw-bold text-success">{{ total_linhas - (erros|length) }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm py-3 border-start border-danger border-4 bg-white">
+            <div class="card-body">
+                <h6 class="text-uppercase text-muted fw-bold small">Inconsistências</h6>
+                <div class="h2 mb-0 fw-bold text-danger">{{ erros|length }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-danger text-white fw-bold d-flex justify-content-between align-items-center">
+        <span>🚨 Alertas Ativos na Planilha Google Sheets</span>
+        <span class="badge bg-white text-danger fw-bold">{{ erros|length }} Erros</span>
+    </div>
+    <div class="card-body p-0">
+        {% if erros %}
+            <div class="list-group list-group-flush">
+                {% for erro in erros %}
+                    <div class="list-group-item p-3">
+                        <div class="d-flex w-100 justify-content-between mb-1">
+                            <h5 class="mb-1 text-dark fw-bold">Aba: <span class="text-uppercase text-secondary">{{ erro.tabela }}</span></h5>
+                            <small class="text-danger fw-bold">Linha #{{ erro.linha }}</small>
+                        </div>
+                        <p class="mb-1 text-muted">{{ erro.descricao }}</p>
+                        <small class="badge bg-light text-danger border border-danger-subtle mt-1">Erro: {{ erro.tipo }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5 text-muted">
+                <h4 class="fw-bold text-success">✔️ Base de Dados Cloud 100% Consistente!</h4>
+                <p class="mb-0">Nenhum cabeçalho vazio, duplicação de NIF ou dados órfãos intercetados.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
