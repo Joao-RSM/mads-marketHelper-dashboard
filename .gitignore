@@ -1,0 +1,22 @@
+# Ambiente Virtual
+venv/
+
+# Credenciais (Segurança)
+secrets/
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# env
+.env
