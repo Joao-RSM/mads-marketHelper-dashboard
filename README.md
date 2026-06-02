@@ -1,4 +1,4 @@
-# Analise dos dados do Mads Market Helper
+# Análise dos dados do Mads Market Helper
 
 
 Aplicação web em Flask que lê dados de um Google Sheets e apresenta tabelas, mapa interativo, dashboard e validação de dados, com controlo de acesso por chaves.
