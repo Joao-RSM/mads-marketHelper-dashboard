@@ -7,7 +7,7 @@ Aplicação web em Flask que lê dados de um Google Sheets e apresenta tabelas, 
 Relatório do projeto desenvolvido disponível em: [docs.google.com](https://docs.google.com/document/d/13gSFjmzMoq2zGprYOtWKZ1EMkF2OzDOVnUL1zNi6VSw/edit?tab=t.0#heading=h.2ktf1rf4d27p)
 
 
-> Projeto disponível na plataforma Render.com [Link do Projeto](https://mads-markethelper-grupo2.onrender.com/). As chaves de acesso aos dados privados estão disponíveis no relatório do projeto.
+> Projeto disponível na plataforma Render.com [Link do Projeto](https://mads-markethelper-dashboard.onrender.com). As chaves de acesso aos dados privados estão disponíveis no relatório do projeto.
 
 
 > Com apoio de [Gemini](https://gemini.google.com) e [ChatGPT](https://chatgpt.com)
