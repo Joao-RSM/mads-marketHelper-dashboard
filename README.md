@@ -128,7 +128,6 @@ python app.py
 ├── dashboard.py          # Módulo de extração analítica e geração de gráficos
 ├── requirements.txt      # Dependências do projeto
 ├── README.md             # Este ficheiro
-├── static/               # Recursos estáticos (CSS, JS)
 └── templates/            # Ficheiros HTML estruturados com Jinja2
     ├── base.html         # Navbar e estrutura base comum
     ├── landing.html      # Landing Page pública com listagem de lojas e mapa
