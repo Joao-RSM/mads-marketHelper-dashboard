@@ -81,8 +81,8 @@ Criar `secrets/chave.json` com o mapeamento das duas chaves do projeto:
 
 ```json
 {
-  "dados_privados": "chave_dados_grupo2",
-  "integridade_admin": "chave_integridade_grupo2"
+  "dados_privados": "coloque_a_sua_chave_aqui",
+  "integridade_admin": "coloque_a_sua_chave_admin_aqui"
 }
 
 ```
