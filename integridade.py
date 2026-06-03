@@ -15,7 +15,7 @@ def executar_auditoria_cloud(dados_totais):
         if not nif or len(nif) != 9 or not nif.isdigit():
             erros.append({"tabela": "Utilizadores", "linha": idx, "descricao": f"NIF inválido: {nif}", "tipo": "Formato"})
         
-        genero = str(user.get("Género", "")).strip().upper()
+        genero = str(user.get("Sexo", "")).strip().upper()
         if genero not in ["M", "F", "O"]:
             erros.append({"tabela": "Utilizadores", "linha": idx, "descricao": f"Género inválido: {genero}", "tipo": "Domínio"})
 
