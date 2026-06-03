@@ -12,6 +12,7 @@ Relatório do projeto desenvolvido disponível em: [docs.google.com](https://doc
 
 > Com apoio de [Gemini](https://gemini.google.com) e [ChatGPT](https://chatgpt.com)
 
+>Aviso: Os dados incluídos neste projeto são fictícios e utilizados exclusivamente em contexto educacional e de demonstração.
 
 --- 
 
