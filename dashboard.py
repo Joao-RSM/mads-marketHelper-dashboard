@@ -4,6 +4,14 @@ import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg')
 
+def obter_valor(dicionario, possiveis_chaves):
+    # Limpa espaços invisíveis e põe em minúsculas todas as colunas do teu Excel
+    dic_limpo = {str(k).strip().lower(): v for k, v in dicionario.items()}
+    for chave in possiveis_chaves:
+        if chave in dic_limpo:
+            return dic_limpo[chave]
+    return ""
+
 def filtrar_e_ordenar(compras, filtro_tipo, filtro_valor, ordem):
     if not compras:
         return []
@@ -13,13 +21,13 @@ def filtrar_e_ordenar(compras, filtro_tipo, filtro_valor, ordem):
     if filtro_tipo and filtro_valor:
         termo = str(filtro_valor).lower()
         if filtro_tipo == "produto":
-            resultado = [c for c in resultado if termo in str(c.get('Produto', '')).lower()]
+            resultado = [c for c in resultado if termo in str(obter_valor(c, ['produto'])).lower()]
         elif filtro_tipo == "loja":
-            resultado = [c for c in resultado if termo in str(c.get('ID Loja', '')).lower()]
+            resultado = [c for c in resultado if termo in str(obter_valor(c, ['id loja', 'loja'])).lower()]
         elif filtro_tipo == "nif":
-            resultado = [c for c in resultado if termo in str(c.get('NIF Utilizador', '')).lower()]
+            resultado = [c for c in resultado if termo in str(obter_valor(c, ['nif utilizador', 'nif'])).lower()]
         elif filtro_tipo == "pagamento":
-            resultado = [c for c in resultado if termo == str(c.get('Tipo Pagamento', '')).lower()]
+            resultado = [c for c in resultado if termo == str(obter_valor(c, ['tipo pagamento', 'pagamento'])).lower()]
 
     if ordem == "desc":
         resultado.reverse()
@@ -30,7 +38,8 @@ def gerar_grafico_evolucao(compras, produto):
     if not compras or not produto:
         return None
         
-    compras_produto = [c for c in compras if produto.lower() in str(c.get('Produto', '')).lower()]
+    # Filtra as compras do produto específico
+    compras_produto = [c for c in compras if produto.lower() in str(obter_valor(c, ['produto'])).lower()]
     if not compras_produto:
         return None
         
@@ -38,11 +47,17 @@ def gerar_grafico_evolucao(compras, produto):
         dados_grafico = []
         for c in compras_produto:
             try:
-                preco = float(str(c.get('Preço', '0')).replace(',', '.'))
-                data = str(c.get('Data_compra', ''))
+                # O Python agora caça estas colunas mesmo que o Excel tenha espaços a mais
+                preco_bruto = str(obter_valor(c, ['preço', 'preco']))
+                data_bruta = str(obter_valor(c, ['data_compra', 'data compra', 'data']))
+                
+                preco_limpo = preco_bruto.replace('€', '').replace('R$', '').replace(' ', '').replace(',', '.')
+                preco = float(preco_limpo)
+                data = data_bruta.strip()
+                
                 if data and preco > 0:
                     dados_grafico.append((data, preco))
-            except:
+            except Exception:
                 continue
                 
         if not dados_grafico:
@@ -53,9 +68,9 @@ def gerar_grafico_evolucao(compras, produto):
         precos = [d[1] for d in dados_grafico]
 
         plt.figure(figsize=(8, 4))
-        plt.plot(datas, precos, marker='o', linestyle='-', color='b')
+        plt.plot(datas, precos, marker='o', linestyle='-', color='#0d6efd', linewidth=2)
         plt.title(f'Evolução de Preço: {produto.title()}')
-        plt.xlabel('Data')
+        plt.xlabel('Data da Compra')
         plt.ylabel('Preço (€)')
         plt.grid(True, linestyle='--', alpha=0.7)
         plt.xticks(rotation=45)
@@ -65,6 +80,8 @@ def gerar_grafico_evolucao(compras, produto):
         plt.savefig(img, format='png', bbox_inches='tight')
         img.seek(0)
         plt.close()
+        
         return base64.b64encode(img.getvalue()).decode('utf-8')
     except Exception as e:
+        print(f"Erro a gerar grafico: {str(e)}")
         return None
