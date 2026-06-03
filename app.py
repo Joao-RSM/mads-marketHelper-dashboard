@@ -56,34 +56,6 @@ def index():
     mapa_html = mapa.gerar_mapa_lojas(lojas)
     return render_template("landing.html", lojas=lojas, mapa_html=mapa_html)
 
-@app.route("/add_compra", methods=["POST"])
-def add_compra():
-    nif = request.form.get("nif", "").strip()
-    produto = request.form.get("produto", "").strip().lower()
-    preco = request.form.get("preco", "").strip()
-    id_loja = request.form.get("id_loja", "").strip()
-    data_compra = request.form.get("data_compra", "").strip()
-    tipo_pagamento = request.form.get("tipo_pagamento", "").strip()
-
-    try:
-        if sheet:
-            worksheet_compras = sheet.worksheet("Compras")
-            nova_linha = [
-                str(len(worksheet_compras.get_all_values())),
-                nif,
-                produto,
-                float(preco),
-                id_loja,
-                data_compra,
-                tipo_pagamento if tipo_pagamento else "Não especificado"
-            ]
-            worksheet_compras.append_row(nova_linha)
-            flash("Compra registada com sucesso na Cloud!", "success")
-    except Exception as e:
-        flash(f"Falha ao registar compra: {str(e)}", "error")
-
-    return redirect(url_for("index"))
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     destino = request.args.get("destino", "dashboard")
