@@ -1,77 +1,44 @@
-import io
-import base64
-import matplotlib.pyplot as plt
-import matplotlib
-matplotlib.use('Agg')
-
-def filtrar_e_ordenar(compras, filtro_tipo, filtro_valor, ordem):
-    if not compras:
-        return []
-        
-    resultado = compras
-    
-    if filtro_tipo and filtro_valor:
-        termo = str(filtro_valor).lower()
-        if filtro_tipo == "produto":
-            resultado = [c for c in resultado if termo in str(c.get('Produto', '')).lower()]
-        elif filtro_tipo == "loja":
-            resultado = [c for c in resultado if termo in str(c.get('ID Loja', '')).lower()]
-        elif filtro_tipo == "nif":
-            resultado = [c for c in resultado if termo in str(c.get('NIF Utilizador', '')).lower()]
-        elif filtro_tipo == "pagamento":
-            resultado = [c for c in resultado if termo == str(c.get('Tipo Pagamento', '')).lower()]
-
-    if ordem == "desc":
-        resultado.reverse()
-        
-    return resultado
-
-def gerar_grafico_evolucao(compras, produto):
-    if not compras or not produto:
-        return None
-        
-    compras_produto = [c for c in compras if produto.lower() in str(c.get('Produto', '')).lower()]
-    if not compras_produto:
-        return None
-        
-    try:
-        dados_grafico = []
-        for c in compras_produto:
-            try:
-                preco = float(str(c.get('Preço', '0')).replace(',', '.'))
-                data = str(c.get('Data_compra', ''))
-                if data and preco > 0:
-                    dados_grafico.append((data, preco))
-            except:
-                continue
-                
-        if not dados_grafico:
-            return None
-            
-        dados_grafico.sort(key=lambda x: x[0])
-        datas = [d[0] for d in dados_grafico]
-        precos = [d[1] for d in dados_grafico]
-
-        plt.figure(figsize=(8, 4))
-        plt.plot(datas, precos, marker='o', linestyle='-', color='b')
-        plt.title(f'Evolução de Preço: {produto.title()}')
-        plt.xlabel('Data')
-        plt.ylabel('Preço (€)')
-        plt.grid(True, linestyle='--', alpha=0.7)
-        plt.xticks(rotation=45)
-        plt.tight_layout()
-
-        img = io.BytesIO()
-        plt.savefig(img, format='png', bbox_inches='tight')
-        img.seek(0)
-        plt.close()
-        return base64.b64encode(img.getvalue()).decode('utf-8')
-    except Exception as e:
-        return None
-
-
-
+import folium
 
 def gerar_mapa_lojas(lojas):
-    # Escudo temporário para o site não crashar enquanto o mapa não é feito
-    return "<div style='text-align: center; padding: 20px; color: gray;'>Mapa em construção...</div>"
+    if not lojas:
+        return "<div class='text-center p-4 text-muted'>Nenhuma loja para mostrar no mapa.</div>"
+    
+    # Cria o mapa centrado em Portugal com um nível de zoom ideal
+    mapa = folium.Map(location=[39.5, -8.0], zoom_start=6)
+    
+    # Percorre todas as lojas do teu Excel
+    for loja in lojas:
+        try:
+            # Vai buscar a Lat e Lon e converte a vírgula para ponto automaticamente
+            lat_str = str(loja.get('Lat', '')).strip().replace(',', '.')
+            lon_str = str(loja.get('Lon', '')).strip().replace(',', '.')
+            
+            # Se a loja não tiver coordenadas preenchidas, salta para a próxima
+            if not lat_str or not lon_str:
+                continue
+                
+            lat = float(lat_str)
+            lon = float(lon_str)
+            
+            nome = loja.get('Nome', 'Loja Desconhecida')
+            especialidade = loja.get('Especialidade', '')
+            localizacao = loja.get('Localização', '')
+            
+            # Constrói o balão de informação que aparece quando clicas no pino
+            popup_html = f"<b>{nome}</b><br><span style='color: gray;'>{especialidade}</span><br><i>{localizacao}</i>"
+            
+            # Espeta o pino azul no mapa
+            folium.Marker(
+                [lat, lon], 
+                popup=popup_html, 
+                tooltip=nome,
+                icon=folium.Icon(color='blue', icon='info-sign')
+            ).add_to(mapa)
+            
+        except ValueError:
+            # Se houver algum erro de formatação numa linha, o código ignora e não crasha o site
+            continue
+            
+    # Transforma o mapa em código HTML para o teu site conseguir exibi-lo
+    return mapa._repr_html_()
