@@ -38,7 +38,7 @@ def gerar_grafico_evolucao(compras, produto):
         dados_grafico = []
         for c in compras_produto:
             try:
-                # 1. Procura as colunas com vários nomes possíveis
+                # 1. Procura as colunas com vários nomes possíveis para não falhar
                 preco_bruto = str(c.get('Preço', c.get('Preco', c.get('preço', '0'))))
                 data_bruta = str(c.get('Data_compra', c.get('Data compra', c.get('Data', ''))))
                 
@@ -56,7 +56,7 @@ def gerar_grafico_evolucao(compras, produto):
         if not dados_grafico:
             return None
             
-        # Ordenar os dados por data para a linha do gráfico não andar para trás e para a frente
+        # Ordenar os dados por data para a linha não andar para trás e para a frente
         dados_grafico.sort(key=lambda x: x[0])
         datas = [d[0] for d in dados_grafico]
         precos = [d[1] for d in dados_grafico]
