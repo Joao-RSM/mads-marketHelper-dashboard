@@ -7,7 +7,7 @@ def gerar_mapa_lojas(lojas):
     # Cria o mapa centrado em Portugal com um nível de zoom ideal
     mapa = folium.Map(location=[39.5, -8.0], zoom_start=6)
     
-    # Percorre todas as lojas do teu Excel
+    # Percorre todas as lojas 
     for loja in lojas:
         try:
             # Vai buscar a Lat e Lon e converte a vírgula para ponto automaticamente
@@ -25,10 +25,10 @@ def gerar_mapa_lojas(lojas):
             especialidade = loja.get('Especialidade', '')
             localizacao = loja.get('Localização', '')
             
-            # Constrói o balão de informação que aparece quando clicas no pino
+            # Balão de informação
             popup_html = f"<b>{nome}</b><br><span style='color: gray;'>{especialidade}</span><br><i>{localizacao}</i>"
             
-            # Espeta o pino azul no mapa
+            # Pino azul no mapa
             folium.Marker(
                 [lat, lon], 
                 popup=popup_html, 
@@ -40,5 +40,5 @@ def gerar_mapa_lojas(lojas):
             # Se houver algum erro de formatação numa linha, o código ignora e não crasha o site
             continue
             
-    # Transforma o mapa em código HTML para o teu site conseguir exibi-lo
+    # Transforma o mapa em código HTML
     return mapa._repr_html_()
