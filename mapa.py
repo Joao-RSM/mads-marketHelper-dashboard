@@ -9,7 +9,11 @@ def gerar_mapa_lojas(lojas):
     
     # Percorre todas as lojas do teu Excel
     for loja in lojas:
-        
+        try:
+            # Vai buscar a Lat e Lon e converte a vírgula para ponto automaticamente
+            lat_str = str(loja.get('Lat', '')).strip().replace(',', '.')
+            lon_str = str(loja.get('Lon', '')).strip().replace(',', '.')
+            
             # Se a loja não tiver coordenadas preenchidas, salta para a próxima
             if not lat_str or not lon_str:
                 continue
