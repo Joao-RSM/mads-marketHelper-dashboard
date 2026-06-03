@@ -1,7 +1,7 @@
 import os
 import json
 from pathlib import Path
-from flask import Flask, request, render_template, redirect, url_for, session, flash, jsonify
+from flask import Flask, request, render_template, redirect, url_for, session, flash, jsonify, render_template_string
 from dotenv import load_dotenv
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -64,19 +64,67 @@ def login():
         chave_inserida = request.form.get("chave", "").strip()
         destino_post = request.form.get("destino", "dashboard")
         
-        if destino_post == "integridade":
-            if chave_inserida == KEYS.get("integridade_admin"):
-                session["integridade_admin"] = True
-                return redirect(url_for("integridade_route"))
-        else:
-            if chave_inserida == KEYS.get("dados_privados"):
+        # 1. Chave de Integridade
+        if chave_inserida == KEYS.get("integridade_admin"):
+            session["integridade_admin"] = True
+            return redirect(url_for("integridade_route"))
+            
+        # 2. Chave Geral (Acesso ao Dashboard completo antigo)
+        if chave_inserida == KEYS.get("dados_privados"):
+            session["dados_privados"] = True
+            return redirect(url_for("dashboard_route"))
+            
+        # 3. NOVAS CHAVES ESPECÍFICAS (Acesso Direto e Simples a um Produto)
+        # Verifica se alguma chave configurada no Render começa por "item_" e corresponde à password
+        for nome_chave, password in KEYS.items():
+            if str(nome_chave).startswith("item_") and chave_inserida == str(password):
                 session["dados_privados"] = True
-                return redirect(url_for("dashboard_route"))
+                session["item_especifico"] = str(nome_chave).replace("item_", "") # Extrai o nome, ex: "carne"
+                return redirect(url_for("item_simples_route"))
         
         flash("Chave de acesso inválida.", "error")
         return render_template("login.html", destino=destino_post)
 
     return render_template("login.html", destino=destino)
+
+@app.route("/item_simples", methods=["GET"])
+def item_simples_route():
+    # Proteção: só entra quem tem dados privados e um item específico atribuído
+    if not session.get("dados_privados") or not session.get("item_especifico"):
+        return redirect(url_for("login"))
+
+    item = session.get("item_especifico")
+    compras = obter_linhas_cloud("Compras")
+    
+    # Gera o gráfico apenas para o item da password inserida
+    grafico_base64 = dashboard.gerar_grafico_evolucao(compras, item)
+    
+    # Constrói uma página HTML minimalista injetada no momento (sem navegação)
+    html_simples = """
+    {% extends 'base.html' %}
+    {% block title %}Análise: {{ item.title() }}{% endblock %}
+    {% block content %}
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8 text-center">
+            <div class="card shadow-sm mt-5">
+                <div class="card-header bg-dark text-white fw-bold fs-5">
+                    Variação de Preço: {{ item.title() }}
+                </div>
+                <div class="card-body p-5">
+                    {% if grafico_base64 %}
+                        <img src="data:image/png;base64,{{ grafico_base64 }}" class="img-fluid rounded mb-4 shadow" alt="Gráfico de {{ item }}">
+                    {% else %}
+                        <div class="alert alert-warning">Ainda não há dados suficientes registados na Cloud para desenhar um gráfico de "{{ item }}".</div>
+                    {% endif %}
+                    <br><br>
+                    <a href="/logout" class="btn btn-outline-danger fw-bold px-4">Terminar Sessão e Voltar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+    """
+    return render_template_string(html_simples, item=item, grafico_base64=grafico_base64)
 
 @app.route("/dashboard", methods=["GET"])
 def dashboard_route():
