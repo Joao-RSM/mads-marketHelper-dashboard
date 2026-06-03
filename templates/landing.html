@@ -48,6 +48,8 @@
                         <th>Nome</th>
                         <th>Especialidade</th>
                         <th>Localização</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,10 +59,12 @@
                         <td>{{ loja['Nome'] }}</td>
                         <td><span class="badge bg-info text-dark">{{ loja['Especialidade'] }}</span></td>
                         <td>{{ loja['Localização'] }}</td>
+                        <td>{{ loja['Lat'] }}</td>
+                        <td>{{ loja['Lon'] }}</td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="4" class="text-center text-muted py-4">Nenhuma loja registada na base de dados.</td>
+                        <td colspan="6" class="text-center text-muted py-4">Nenhuma loja registada na base de dados.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
