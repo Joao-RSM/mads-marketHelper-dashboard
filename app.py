@@ -64,24 +64,37 @@ def login():
         chave_inserida = request.form.get("chave", "").strip()
         destino_post = request.form.get("destino", "dashboard")
         
-        # 1. Chave de Integridade
+        # Admin integridade
         if chave_inserida == KEYS.get("integridade_admin"):
             session["integridade_admin"] = True
             return redirect(url_for("integridade_route"))
             
-        # 2. Chave Geral (Acesso ao Dashboard completo antigo)
+        # Acesso geral dashboard
         if chave_inserida == KEYS.get("dados_privados"):
             session["dados_privados"] = True
             return redirect(url_for("dashboard_route"))
             
-        # 3. NOVAS CHAVES ESPECÍFICAS (Acesso Direto e Simples a um Produto)
-        # Verifica se alguma chave configurada no Render começa por "item_" e corresponde à password
+        # Acesso por item especifico
         for nome_chave, password in KEYS.items():
             if str(nome_chave).startswith("item_") and chave_inserida == str(password):
                 session["dados_privados"] = True
-                session["item_especifico"] = str(nome_chave).replace("item_", "") # Extrai o nome, ex: "carne"
+                session["item_especifico"] = str(nome_chave).replace("item_", "")
                 return redirect(url_for("item_simples_route"))
+                
+        # Acesso view tabelas
+        if chave_inserida == KEYS.get("ver_users_123"):
+            session["tabela_permitida"] = "Utilizadores"
+            return redirect(url_for("visualizar_tabela", nome_tabela="Utilizadores"))
+            
+        if chave_inserida == KEYS.get("ver_compras_123"):
+            session["tabela_permitida"] = "Compras"
+            return redirect(url_for("visualizar_tabela", nome_tabela="Compras"))
+            
+        if chave_inserida == KEYS.get("ver_cat_123"):
+            session["tabela_permitida"] = "categoriasLojas"
+            return redirect(url_for("visualizar_tabela", nome_tabela="categoriasLojas"))
         
+        # Falha autenticacao
         flash("Chave de acesso inválida.", "error")
         return redirect(url_for("index"))
 
@@ -89,17 +102,16 @@ def login():
 
 @app.route("/item_simples", methods=["GET"])
 def item_simples_route():
-    # Proteção: só entra quem tem dados privados e um item específico atribuído
+    # Validar sessao
     if not session.get("dados_privados") or not session.get("item_especifico"):
         return redirect(url_for("login"))
 
     item = session.get("item_especifico")
     compras = obter_linhas_cloud("Compras")
     
-    # Gera o gráfico apenas para o item da password inserida
     grafico_base64 = dashboard.gerar_grafico_evolucao(compras, item)
     
-    # Constrói uma página HTML minimalista injetada no momento (sem navegação)
+    # Template inline renderizado via string
     html_simples = """
     {% extends 'base.html' %}
     {% block title %}Análise: {{ item.title() }}{% endblock %}
@@ -180,6 +192,16 @@ def integridade_route():
     total_linhas = sum(len(v) for v in dados_totais.values())
 
     return render_template("integridade.html", erros=erros_detetados, total_linhas=total_linhas)
+
+@app.route("/tabela/<nome_tabela>", methods=["GET"])
+def visualizar_tabela(nome_tabela):
+    # Validar autorizacao para a tabela especifica
+    if session.get("tabela_permitida") != nome_tabela:
+        return redirect(url_for("index"))
+        
+    dados_tabela = obter_linhas_cloud(nome_tabela)
+        
+    return render_template("ver_tabela.html", titulo=nome_tabela, dados=dados_tabela)
 
 @app.route("/logout", methods=["GET"])
 def logout():
