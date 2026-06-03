@@ -5,7 +5,7 @@ import matplotlib
 matplotlib.use('Agg')
 
 def obter_valor(dicionario, possiveis_chaves):
-    # Limpa espaços invisíveis e põe em minúsculas todas as colunas do teu Excel
+    # normalizar chaves do dic (tira espacos e mete em minusculas)
     dic_limpo = {str(k).strip().lower(): v for k, v in dicionario.items()}
     for chave in possiveis_chaves:
         if chave in dic_limpo:
@@ -18,6 +18,7 @@ def filtrar_e_ordenar(compras, filtro_tipo, filtro_valor, ordem):
         
     resultado = compras
     
+    # aplicar filtros
     if filtro_tipo and filtro_valor:
         termo = str(filtro_valor).lower()
         if filtro_tipo == "produto":
@@ -29,6 +30,7 @@ def filtrar_e_ordenar(compras, filtro_tipo, filtro_valor, ordem):
         elif filtro_tipo == "pagamento":
             resultado = [c for c in resultado if termo == str(obter_valor(c, ['tipo pagamento', 'pagamento'])).lower()]
 
+    # ordenacao
     if ordem == "desc":
         resultado.reverse()
         
@@ -38,7 +40,7 @@ def gerar_grafico_evolucao(compras, produto):
     if not compras or not produto:
         return None
         
-    # Filtra as compras do produto específico
+    # filtra so os dados deste produto
     compras_produto = [c for c in compras if produto.lower() in str(obter_valor(c, ['produto'])).lower()]
     if not compras_produto:
         return None
@@ -47,10 +49,11 @@ def gerar_grafico_evolucao(compras, produto):
         dados_grafico = []
         for c in compras_produto:
             try:
-                # O Python agora caça estas colunas mesmo que o Excel tenha espaços a mais
+                # apanhar colunas com nomes parecidos
                 preco_bruto = str(obter_valor(c, ['preço', 'preco']))
                 data_bruta = str(obter_valor(c, ['data_compra', 'data compra', 'data']))
                 
+                # limpar formatacao do preco (euros, espacos, virgulas)
                 preco_limpo = preco_bruto.replace('€', '').replace('R$', '').replace(' ', '').replace(',', '.')
                 preco = float(preco_limpo)
                 data = data_bruta.strip()
@@ -63,10 +66,12 @@ def gerar_grafico_evolucao(compras, produto):
         if not dados_grafico:
             return None
             
+        # ordenar por data (crescente)
         dados_grafico.sort(key=lambda x: x[0])
         datas = [d[0] for d in dados_grafico]
         precos = [d[1] for d in dados_grafico]
 
+        # config e render do grafico
         plt.figure(figsize=(8, 4))
         plt.plot(datas, precos, marker='o', linestyle='-', color='#0d6efd', linewidth=2)
         plt.title(f'Evolução de Preço: {produto.title()}')
@@ -76,6 +81,7 @@ def gerar_grafico_evolucao(compras, produto):
         plt.xticks(rotation=45)
         plt.tight_layout()
 
+        # converter imagem p/ html
         img = io.BytesIO()
         plt.savefig(img, format='png', bbox_inches='tight')
         img.seek(0)
