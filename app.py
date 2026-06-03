@@ -184,7 +184,6 @@ def integridade_route():
 @app.route("/logout", methods=["GET"])
 def logout():
     session.clear()
-    flash("Sessão encerrada.", "success")
     return redirect(url_for("index"))
 
 if __name__ == "__main__":
