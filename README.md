@@ -87,15 +87,6 @@ Criar `secrets/chave.json` com o mapeamento das duas chaves do projeto:
 
 ```
 
-### 3. Variáveis de ambiente
-
-Criar um ficheiro `.env` na raiz do projeto:
-
-```env
-isProduction=false
-
-```
-
 Em produção (ex.: Render), definir `isProduction=true`. A aplicação irá procurar as credenciais em `/etc/secrets/`.
 
 ---
