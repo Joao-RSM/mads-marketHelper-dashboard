@@ -83,7 +83,7 @@ def login():
                 return redirect(url_for("item_simples_route"))
         
         flash("Chave de acesso inválida.", "error")
-        return render_template("login.html", destino=destino_post)
+        return redirect(url_for("index"))
 
     return render_template("login.html", destino=destino)
 
