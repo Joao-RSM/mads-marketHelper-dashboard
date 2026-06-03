@@ -68,3 +68,10 @@ def gerar_grafico_evolucao(compras, produto):
         return base64.b64encode(img.getvalue()).decode('utf-8')
     except Exception as e:
         return None
+
+
+
+
+def gerar_mapa_lojas(lojas):
+    # Escudo temporário para o site não crashar enquanto o mapa não é feito
+    return "<div style='text-align: center; padding: 20px; color: gray;'>Mapa em construção...</div>"
