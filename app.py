@@ -82,15 +82,15 @@ def login():
                 return redirect(url_for("item_simples_route"))
                 
         # Acesso view tabelas
-        if chave_inserida == KEYS.get("ver_users_123"):
+        if chave_inserida == KEYS.get("ver_utilizadores"):
             session["tabela_permitida"] = "Utilizadores"
             return redirect(url_for("visualizar_tabela", nome_tabela="Utilizadores"))
             
-        if chave_inserida == KEYS.get("ver_compras_123"):
+        if chave_inserida == KEYS.get("ver_compras"):
             session["tabela_permitida"] = "Compras"
             return redirect(url_for("visualizar_tabela", nome_tabela="Compras"))
             
-        if chave_inserida == KEYS.get("ver_cat_123"):
+        if chave_inserida == KEYS.get("ver_categorias"):
             session["tabela_permitida"] = "categoriasLojas"
             return redirect(url_for("visualizar_tabela", nome_tabela="categoriasLojas"))
         
