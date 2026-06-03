@@ -117,7 +117,7 @@ def item_simples_route():
                         <div class="alert alert-warning">Ainda não há dados suficientes registados na Cloud para desenhar um gráfico de "{{ item }}".</div>
                     {% endif %}
                     <br><br>
-                    <a href="/logout" class="btn btn-outline-danger fw-bold px-4">Terminar Sessão e Voltar</a>
+                    <a href="/logout" class="btn btn-outline-danger fw-bold px-4">Voltar</a>
                 </div>
             </div>
         </div>
