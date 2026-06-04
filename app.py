@@ -138,14 +138,15 @@ def item_simples_route():
 
 @app.route("/dados", methods=["GET"])
 def dados_route():
-    # nova rota que substitui o dashboard antigo
     if not session.get("dados_privados"):
         return redirect(url_for("index"))
         
     compras = obter_linhas_cloud("Compras")
+    lojas = obter_linhas_cloud("Lojas") # essencial para cruzar os IDs com os Nomes
     
-    # gerar os 4 graficos globais comparativos
-    g_vendas, g_lucro, g_cat, g_preco = dashboard.gerar_graficos_comparativos(compras)
+    g_vendas, g_lucro, g_cat, g_preco, g_dist_cat = dashboard.gerar_graficos_comparativos(compras, lojas)
+    
+    return render_template("dados.html", g_vendas=g_vendas, g_lucro=g_lucro, g_cat=g_cat, g_preco=g_preco, g_dist_cat=g_dist_cat)
     
     return render_template("dados.html", g_vendas=g_vendas, g_lucro=g_lucro, g_cat=g_cat, g_preco=g_preco)
 
