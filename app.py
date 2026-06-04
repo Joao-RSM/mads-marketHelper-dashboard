@@ -37,7 +37,7 @@ try:
         KEYS = json.load(f)
 except Exception:
     KEYS = {
-        "dados_privados": "chave_dados_grupo2",
+        "dados_privados": "dados_privados",
         "integridade_admin": "chave_integridade_grupo2"
     }
 
@@ -58,30 +58,26 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    destino = request.args.get("destino", "dashboard")
+    destino = request.args.get("destino", "dados")
     
     if request.method == "POST":
         chave_inserida = request.form.get("chave", "").strip()
-        destino_post = request.form.get("destino", "dashboard")
         
-        # Admin integridade
+        # enter vazio -> index
+        if not chave_inserida:
+            return redirect(url_for("index"))
+            
+        # admin integridade
         if chave_inserida == KEYS.get("integridade_admin"):
             session["integridade_admin"] = True
             return redirect(url_for("integridade_route"))
             
-        # Acesso geral dashboard
+        # painel principal (4 graficos)
         if chave_inserida == KEYS.get("dados_privados"):
             session["dados_privados"] = True
-            return redirect(url_for("dashboard_route"))
+            return redirect(url_for("dados_route"))
             
-        # Acesso por item especifico
-        for nome_chave, password in KEYS.items():
-            if str(nome_chave).startswith("item_") and chave_inserida == str(password):
-                session["dados_privados"] = True
-                session["item_especifico"] = str(nome_chave).replace("item_", "")
-                return redirect(url_for("item_simples_route"))
-                
-        # Acesso view tabelas
+        # view tabelas
         if chave_inserida == KEYS.get("ver_utilizadores"):
             session["tabela_permitida"] = "Utilizadores"
             return redirect(url_for("visualizar_tabela", nome_tabela="Utilizadores"))
@@ -93,8 +89,15 @@ def login():
         if chave_inserida == KEYS.get("ver_categorias"):
             session["tabela_permitida"] = "categoriasLojas"
             return redirect(url_for("visualizar_tabela", nome_tabela="categoriasLojas"))
-        
-        # Falha autenticacao
+            
+        # acesso por item especifico (graficos antigos)
+        for nome_chave, password in KEYS.items():
+            if str(nome_chave).startswith("item_") and chave_inserida == str(password):
+                session["dados_privados"] = True
+                session["item_especifico"] = str(nome_chave).replace("item_", "")
+                return redirect(url_for("item_simples_route"))
+                
+        # falhou autenticacao
         flash("Chave de acesso inválida.", "error")
         return redirect(url_for("index"))
 
@@ -102,7 +105,7 @@ def login():
 
 @app.route("/item_simples", methods=["GET"])
 def item_simples_route():
-    # Validar sessao
+    # validar sessao
     if not session.get("dados_privados") or not session.get("item_especifico"):
         return redirect(url_for("login"))
 
@@ -111,7 +114,7 @@ def item_simples_route():
     
     grafico_base64 = dashboard.gerar_grafico_evolucao(compras, item)
     
-    # Template inline renderizado via string
+    # render inline
     html_simples = """
     {% extends 'base.html' %}
     {% block title %}Análise: {{ item.title() }}{% endblock %}
@@ -138,43 +141,27 @@ def item_simples_route():
     """
     return render_template_string(html_simples, item=item, grafico_base64=grafico_base64)
 
-@app.route("/dashboard", methods=["GET"])
-def dashboard_route():
+@app.route("/dados", methods=["GET"])
+def dados_route():
+    # nova rota que substitui o dashboard antigo
     if not session.get("dados_privados"):
-        return redirect(url_for("login", destino="dashboard"))
+        return redirect(url_for("login"))
         
     compras = obter_linhas_cloud("Compras")
     
-    filtro_tipo = request.args.get("filtro_tipo", "")
-    filtro_valor = request.args.get("filtro_valor", "")
-    ordem = request.args.get("ordem", "asc")
+    # gerar os 4 graficos globais comparativos
+    g_vendas, g_lucro, g_cat, g_preco = dashboard.gerar_graficos_comparativos(compras)
     
-    compras_filtradas = dashboard.filtrar_e_ordenar(compras, filtro_tipo, filtro_valor, ordem)
-    
-    grafico_produto = request.args.get("grafico_produto", "").strip().lower()
-    grafico_base64 = None
-    if grafico_produto:
-        grafico_base64 = dashboard.gerar_grafico_evolucao(compras, grafico_produto)
-
-    session["compras_filtradas_view"] = compras_filtradas
-
-    return render_template(
-        "dashboard.html", 
-        compras=compras_filtradas, 
-        filtro_tipo=filtro_tipo, 
-        filtro_valor=filtro_valor, 
-        ordem=ordem,
-        grafico_produto=grafico_produto,
-        grafico_base64=grafico_base64
-    )
+    return render_template("dados.html", g_vendas=g_vendas, g_lucro=g_lucro, g_cat=g_cat, g_preco=g_preco)
 
 @app.route("/exportar_json", methods=["GET"])
 def exportar_json():
     if not session.get("dados_privados"):
         return jsonify({"erro": "Acesso nao autorizado"}), 401
     
-    dados_view = session.get("compras_filtradas_view", [])
-    return jsonify(dados_view)
+    # envia todas as compras ja que nao ha mais view filtrada
+    compras = obter_linhas_cloud("Compras")
+    return jsonify(compras)
 
 @app.route("/integridade", methods=["GET"])
 def integridade_route():
@@ -195,7 +182,7 @@ def integridade_route():
 
 @app.route("/tabela/<nome_tabela>", methods=["GET"])
 def visualizar_tabela(nome_tabela):
-    # Validar autorizacao para a tabela especifica
+    # validar autorizacao para a tabela especifica
     if session.get("tabela_permitida") != nome_tabela:
         return redirect(url_for("index"))
         
