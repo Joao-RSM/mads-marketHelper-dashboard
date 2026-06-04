@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Estatísticas - MarketHelper{% endblock %}
+{% block content %}
+
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-between align-items-center bg-white p-3 rounded-3 shadow-sm border">
+        <div>
+            <h2 class="fw-bold text-dark mb-0">Estatísticas Globais</h2>
+        </div>
+        <a href="/logout" class="btn btn-outline-danger fw-bold shadow-sm">Sair</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body text-center p-3">
+                {% if g_vendas %}
+                    <img src="data:image/png;base64,{{ g_vendas }}" class="img-fluid rounded" alt="Vendas">
+                {% else %}
+                    <p class="text-muted mt-5">Sem dados</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body text-center p-3">
+                {% if g_lucro %}
+                    <img src="data:image/png;base64,{{ g_lucro }}" class="img-fluid rounded" alt="Lucro">
+                {% else %}
+                    <p class="text-muted mt-5">Sem dados</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body text-center p-3">
+                {% if g_cat %}
+                    <img src="data:image/png;base64,{{ g_cat }}" class="img-fluid rounded" alt="Categorias">
+                {% else %}
+                    <p class="text-muted mt-5">Sem dados</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body text-center p-3">
+                {% if g_preco %}
+                    <img src="data:image/png;base64,{{ g_preco }}" class="img-fluid rounded" alt="Preços">
+                {% else %}
+                    <p class="text-muted mt-5">Sem dados</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
