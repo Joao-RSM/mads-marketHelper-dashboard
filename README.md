@@ -159,6 +159,4 @@ João Martins, José Mendonça, Rodrigo Santos, Mário Pinto
 
 **Data:** Maio de 2026 · **Instituição:** Instituto Politécnico da Maia (IPMAIA)
 
-```
 
-```
