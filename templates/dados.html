@@ -11,48 +11,65 @@
     </div>
 </div>
 
+<!-- Lojas -->
 <div class="row">
     <div class="col-md-6 mb-4">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body text-center p-3">
                 {% if g_vendas %}
-                    <img src="data:image/png;base64,{{ g_vendas }}" class="img-fluid rounded" alt="Vendas">
+                    <img src="data:image/png;base64,{{ g_vendas }}" class="img-fluid rounded" alt="Vendas por Loja">
                 {% else %}
                     <p class="text-muted mt-5">Sem dados</p>
                 {% endif %}
             </div>
         </div>
     </div>
-
     <div class="col-md-6 mb-4">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body text-center p-3">
                 {% if g_lucro %}
-                    <img src="data:image/png;base64,{{ g_lucro }}" class="img-fluid rounded" alt="Lucro">
+                    <img src="data:image/png;base64,{{ g_lucro }}" class="img-fluid rounded" alt="Lucro por Loja">
                 {% else %}
                     <p class="text-muted mt-5">Sem dados</p>
                 {% endif %}
             </div>
         </div>
     </div>
+</div>
 
+<!-- Rodas -->
+<div class="row">
     <div class="col-md-6 mb-4">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body text-center p-3">
                 {% if g_cat %}
-                    <img src="data:image/png;base64,{{ g_cat }}" class="img-fluid rounded" alt="Categorias">
+                    <img src="data:image/png;base64,{{ g_cat }}" class="img-fluid rounded" alt="Vendas por Categoria">
                 {% else %}
                     <p class="text-muted mt-5">Sem dados</p>
                 {% endif %}
             </div>
         </div>
     </div>
-
     <div class="col-md-6 mb-4">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body text-center p-3">
+                {% if g_dist_cat %}
+                    <img src="data:image/png;base64,{{ g_dist_cat }}" class="img-fluid rounded" alt="Distribuição de Lojas">
+                {% else %}
+                    <p class="text-muted mt-5">Sem dados</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Precos -->
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body text-center p-3">
                 {% if g_preco %}
-                    <img src="data:image/png;base64,{{ g_preco }}" class="img-fluid rounded" alt="Preços">
+                    <img src="data:image/png;base64,{{ g_preco }}" class="img-fluid rounded" alt="Preços Médios">
                 {% else %}
                     <p class="text-muted mt-5">Sem dados</p>
                 {% endif %}
