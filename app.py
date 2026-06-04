@@ -84,8 +84,8 @@ def login():
         return redirect(url_for("visualizar_tabela", nome_tabela="Compras"))
         
     if chave_inserida == KEYS.get("ver_categorias"):
-        session["tabela_permitida"] = "categoriasLojas"
-        return redirect(url_for("visualizar_tabela", nome_tabela="categoriasLojas"))
+        session["tabela_permitida"] = "CategoriasLojas"
+        return redirect(url_for("visualizar_tabela", nome_tabela="CategoriasLojas"))
         
     # acesso por item especifico (se ainda quiseres usar os graficos de frango, carne, etc)
     for nome_chave, password in KEYS.items():
