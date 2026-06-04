@@ -1,14 +1,10 @@
 # Análise dos dados do Mads Market Helper
 
-
 Aplicação web em Flask que lê dados de um Google Sheets e apresenta tabelas, mapa interativo, dashboard e validação de dados, com controlo de acesso por chaves.
-
 
 Relatório do projeto desenvolvido disponível em: [docs.google.com](https://docs.google.com/document/d/13gSFjmzMoq2zGprYOtWKZ1EMkF2OzDOVnUL1zNi6VSw/edit?tab=t.0#heading=h.2ktf1rf4d27p)
 
-
 > Projeto disponível na plataforma Render.com [Link do Projeto](https://mads-markethelper-dashboard.onrender.com). As chaves de acesso aos dados privados estão disponíveis no relatório do projeto.
-
 
 > Com apoio de [Gemini](https://gemini.google.com) e [ChatGPT](https://chatgpt.com)
 
@@ -20,11 +16,11 @@ Relatório do projeto desenvolvido disponível em: [docs.google.com](https://doc
 
 | Módulo | Descrição |
 |---|---|
-| **Tabelas** | Utilizadores, lojas, compras e categorias de lojas lidas da Cloud. |
+| **Tabelas** | Acesso individual para leitura das abas de Utilizadores, Compras e Categorias com chaves dedicadas. |
 | **Mapa** | Marcadores geográficos das superfícies comerciais registadas. |
-| **Dashboard** | Gráficos de evolução de preços e cálculo autónomo de variação percentual. |
+| **Dashboard** | Painel analítico de métricas de negócio (Vendas e Lucro por loja, Distribuição de categorias, Preços médios). |
 | **Integridade** | Validação automática dos dados com relatório de erros estruturais e órfãos. |
-| **Acesso** | Controlo por chaves configuráveis para isolar dados públicos e privados. |
+| **Acesso** | Controlo por chaves configuráveis. |
 
 ---
 
@@ -78,12 +74,18 @@ sheet = gc.open("Base de Dados - Utilizadores - Grupo 2")
 
 ### 2. Chaves de acesso
 
-Criar `secrets/chave.json` com o mapeamento das duas chaves do projeto:
+Criar `secrets/chave.json` com o mapeamento das chaves do projeto:
 
 ```json
 {
   "dados_privados": "coloque_a_sua_chave_aqui",
-  "integridade_admin": "coloque_a_sua_chave_admin_aqui"
+  "integridade_admin": "coloque_a_sua_chave_aqui",
+  "item_carne": "coloque_a_sua_chave_aqui",
+  "item_frango": "coloque_a_sua_chave_aqui",
+  "item_leite": "coloque_a_sua_chave_aqui",
+  "ver_utilizadores": "coloque_a_sua_chave_aqui",
+  "ver_compras": "coloque_a_sua_chave_aqui",
+  "ver_categorias": "coloque_a_sua_chave_aqui",
 }
 
 ```
@@ -122,9 +124,9 @@ python app.py
 ├── README.md             # Este ficheiro
 └── templates/            # Ficheiros HTML estruturados com Jinja2
     ├── base.html         # Navbar e estrutura base comum
-    ├── landing.html      # Landing Page pública com listagem de lojas e mapa
-    ├── login.html        # Interface de validação das chaves de acesso
-    ├── dashboard.html    # Painel privado com gráficos e exportação JSON
+    ├── landing.html      # Landing Page pública com mapa e caixa de acesso
+    ├── dados.html        # Painel comparativo de métricas de negócio
+    ├── ver_tabela.html   # Visualização dinâmica e flexível das tabelas da Cloud
     └── integridade.html  # Relatório visual de erros estruturais
 
 ```
@@ -158,5 +160,3 @@ João Martins, José Mendonça, Rodrigo Santos, Mário Pinto
 **Unidade Curricular:** Metodologias Ágeis de Desenvolvimento de Software · Projeto 2
 
 **Data:** Maio de 2026 · **Instituição:** Instituto Politécnico da Maia (IPMAIA)
-
-
